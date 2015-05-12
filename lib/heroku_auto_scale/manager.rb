@@ -2,13 +2,14 @@ require 'heroku_auto_scale/redis_operations'
 require 'heroku_auto_scale'
 require 'heroku_auto_scale/configuration'
 require 'heroku_auto_scale/heroku_operations'
+require 'heroku_auto_scale/sidekiq_operations'
 
 module HerokuAutoScale
   class Manager
     MNGR_ATTRIBUTES = [
       :process_name,
       :queue_name,
-      :redis_operations,
+      :sidekiq_operations,
       :heroku_operations,
       :min_dynos,
       :max_dynos,
@@ -24,12 +25,14 @@ module HerokuAutoScale
         send("#{key}=", options[key])
       end
 
-      init_redis_operations
+      #init_redis_operations
+      init_sidekiq_operations
       init_heroku_operations
     end
 
     def get_number_of_jobs_inside_queue
-      redis_operations.check_queue_for_jobs(@queue_name)
+      sidekiq_operations.check_queue_for_jobs(@queue_name)
+      #redis_operations.check_queue_for_jobs(@queue_name)
     end
 
     def set_process_name(process_name)
@@ -66,12 +69,16 @@ module HerokuAutoScale
     end
 
     private
-      def init_redis_operations
-        @redis_operations = HerokuAutoScale::RedisOperations.new(redis_url)
+      #def init_redis_operations
+        #@redis_operations = HerokuAutoScale::RedisOperations.new(redis_url)
+      #end
+      def init_sidekiq_operations
+        @sidekiq_operations ||= HerokuAutoScale::
+          SidekiqOperations.new
       end
 
       def init_heroku_operations
-        @heroku_operations = HerokuAutoScale::
+        @heroku_operations ||= HerokuAutoScale::
           HerokuOperations.new(
             heroku_oauth_token,
             heroku_app_name
