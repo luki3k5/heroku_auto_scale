@@ -12,7 +12,8 @@ module HerokuAutoScale
     def check_processes_running(process_name)
       ps = Sidekiq::ProcessSet.new
       process = ps.find { |p| p['hostname'].include?(process_name) }
-      process['busy']
+      return process['busy'] if processr
+      return 0
     end
 
   end
