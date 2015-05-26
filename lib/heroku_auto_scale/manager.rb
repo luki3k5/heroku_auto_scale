@@ -25,14 +25,13 @@ module HerokuAutoScale
         send("#{key}=", options[key])
       end
 
-      #init_redis_operations
       init_sidekiq_operations
       init_heroku_operations
     end
 
-    def get_number_of_jobs_inside_queue
-      sidekiq_operations.check_queue_for_jobs(@queue_name)
-      #redis_operations.check_queue_for_jobs(@queue_name)
+    def get_number_of_jobs_and_processes_for_queue
+      sidekiq_operations.check_queue_for_jobs(@queue_name) +
+        sidekiq_operations.check_processes_running(@process_name)
     end
 
     def set_process_name(process_name)
@@ -61,7 +60,7 @@ module HerokuAutoScale
     end
 
     def calculate_number_of_needed_dynos
-      current_jobs = get_number_of_jobs_inside_queue
+      current_jobs = get_number_of_jobs_and_processes_for_queue
       dynos = (current_jobs.to_f / scaling_step.to_f).ceil
 
       scale_to = [dynos, max_dynos].min
@@ -69,9 +68,6 @@ module HerokuAutoScale
     end
 
     private
-      #def init_redis_operations
-        #@redis_operations = HerokuAutoScale::RedisOperations.new(redis_url)
-      #end
       def init_sidekiq_operations
         @sidekiq_operations ||= HerokuAutoScale::
           SidekiqOperations.new

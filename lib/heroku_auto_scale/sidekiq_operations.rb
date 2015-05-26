@@ -9,5 +9,11 @@ module HerokuAutoScale
       @queue.size
     end
 
+    def check_processes_running(process_name)
+      ps = Sidekiq::ProcessSet.new
+      process = ps.find { |p| p['hostname'].includes?(process_name) }
+      process['busy']
+    end
+
   end
 end
