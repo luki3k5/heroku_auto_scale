@@ -72,7 +72,7 @@ describe HerokuAutoScale::Manager do
       manager.set_scaling_step(10_000)
       manager.set_min_dynos(0)
       manager.set_max_dynos(10)
-      allow(manager).to receive(:get_number_of_jobs_inside_queue) { 0 }
+      allow(manager).to receive(:get_number_of_jobs_and_processes_for_queue) { 0 }
 
       expect(manager.calculate_number_of_needed_dynos).to eq(0)
     end
@@ -81,7 +81,7 @@ describe HerokuAutoScale::Manager do
       manager.set_scaling_step(10_000)
       manager.set_min_dynos(1)
       manager.set_max_dynos(10)
-      allow(manager).to receive(:get_number_of_jobs_inside_queue) { 0 }
+      allow(manager).to receive(:get_number_of_jobs_and_processes_for_queue) { 0 }
 
       expect(manager.calculate_number_of_needed_dynos).to eq(1)
     end
@@ -90,7 +90,7 @@ describe HerokuAutoScale::Manager do
       manager.set_scaling_step(10_000)
       manager.set_min_dynos(0)
       manager.set_max_dynos(10)
-      allow(manager).to receive(:get_number_of_jobs_inside_queue) { 8_000 }
+      allow(manager).to receive(:get_number_of_jobs_and_processes_for_queue) { 8_000 }
 
       expect(manager.calculate_number_of_needed_dynos).to eq(1)
     end
@@ -99,7 +99,7 @@ describe HerokuAutoScale::Manager do
       manager.set_scaling_step(10_000)
       manager.set_min_dynos(0)
       manager.set_max_dynos(10)
-      allow(manager).to receive(:get_number_of_jobs_inside_queue) { 18_000 }
+      allow(manager).to receive(:get_number_of_jobs_and_processes_for_queue) { 18_000 }
 
       expect(manager.calculate_number_of_needed_dynos).to eq(2)
     end
@@ -108,7 +108,7 @@ describe HerokuAutoScale::Manager do
       manager.set_scaling_step(10_000)
       manager.set_min_dynos(0)
       manager.set_max_dynos(4)
-      allow(manager).to receive(:get_number_of_jobs_inside_queue) { 180_000 }
+      allow(manager).to receive(:get_number_of_jobs_and_processes_for_queue) { 180_000 }
 
       expect(manager.calculate_number_of_needed_dynos).to eq(4)
     end
